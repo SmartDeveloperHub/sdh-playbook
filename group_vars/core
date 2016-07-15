@@ -1,0 +1,22 @@
+---
+core_ip_address: "{{hostvars[groups['core'][0]]['ansible_eth0']['ipv4']['address']}}"
+
+composes:
+  agora:
+    name: agora
+    path: sdh-machine-agora
+    version: v3
+    repo: https://github.com/smartdeveloperhub/sdh-machine-agora.git
+  metrics:
+    name: metrics
+    path: sdh-machine-metrics
+    version: master
+    repo: https://github.com/smartdeveloperhub/sdh-machine-metrics.git
+    env:
+      AGORA_HOST: "{{core_ip_address}}"
+      BROKER_HOST: "{{core_ip_address}}"
+      BROKER_PORT: 5672
+      AGORA_PORT: 9009
+      METRICS_HOST: "{{core_ip_address}}"
+      METRICS_PORT: 9004
+

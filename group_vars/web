@@ -1,0 +1,26 @@
+---
+web_ip_address: "{{hostvars[groups['web'][0]]['ansible_eth0']['ipv4']['address']}}"
+core_ip_address: "{{hostvars[groups['core'][0]]['ansible_ssh_host']}}"
+
+composes:
+  web:
+    name: web
+    path: /tmp/sdh-machine-web
+    version: master
+    repo: https://github.com/smartdeveloperhub/sdh-machine-web.git
+    env:
+      SDH_API_HOST: sdh.conwet.fi.upm.es
+      SDH_API_PATH: /sdhapi
+      SDH_API_PROTOCOL: http
+      SDH_API_PORT: 9002
+      SDH_LDAP_HOST: ldap://ldap:389
+      SDH_LDAP_PASSWORD: ldapsdh12345
+      SDH_RABBIT_HOST: "amqp://{{core_ip_address}}"
+      SDH_RABBIT_PORT: 5672
+      SDH_API_INTERNAL: http://sdhapi:8080/sdhapi
+      WEB_HOST: sdh.conwet.fi.upm.es
+    nginx:
+      CRT: /opt/ssl/sdh.conwet.fi.upm.es.crt
+      KEY: /opt/ssl/sdh.conwet.fi.upm.es.key
+      DHPARAM: /opt/ssl/dhparam.pem
+      HOST: sdh.conwet.fi.upm.es

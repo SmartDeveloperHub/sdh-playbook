@@ -1,0 +1,7 @@
+---
+#
+- name: stop containers
+  command: docker-compose stop
+  args:
+    chdir: "{{ compose.path }}"
+  

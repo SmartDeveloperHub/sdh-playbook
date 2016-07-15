@@ -1,0 +1,9 @@
+---
+#
+- name: Ensure git is installed
+  apt: name=git
+
+- name: pull docker-compose repository
+  when: update or create
+  git: repo="{{compose.repo}}" force=yes dest="{{compose.path}}" update=yes version="{{compose.version}}"
+  register: new_compose

@@ -1,0 +1,53 @@
+---
+
+- name: build images
+  when: create or new_compose.changed
+  command: docker-compose build --pull
+  register: compose_build
+  args:
+    chdir: "{{ compose.path }}"
+
+- name: stop running containers
+  when: compose_build.changed
+  command: docker-compose stop
+  register: compose_stop
+  changed_when: compose_stop.stdout_lines
+  args:
+    chdir: "{{ compose.path }}"  
+
+- name: remove existing containers
+  when: compose_stop.changed
+  command: docker-compose rm -f
+  register: compose_remove
+  changed_when: "compose_remove.stdout_lines"
+  args:
+    chdir: "{{ compose.path }}"
+
+- name: up containers
+  command: docker-compose up -d --no-recreate
+  register: compose_up
+  args:
+    chdir: "{{ compose.path }}"
+  changed_when: compose_up.stdout_lines
+  
+- name: Wait for Agora to boot  
+  register: ready
+  until: ready.status == 200
+  uri:
+    url: http://localhost:9009/prefixes
+    method: GET
+    status_code: 200
+  retries: 10
+  delay: 5
+
+- name: Register seeds
+  uri:
+    url: http://localhost:9009/seeds
+    method: POST
+    body:
+      type: "{{item.value.type}}"
+      uri: "{{item.value.uri}}"
+    status_code: 201, 409
+    body_format: json
+  with_dict:
+    "{{ seeds }}"

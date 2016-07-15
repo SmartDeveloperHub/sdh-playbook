@@ -1,0 +1,16 @@
+---
+
+- name: Stop Metrics
+  hosts: core
+    - common
+    - stop
+  vars:
+    compose: "{{ composes.metrics }}"
+
+- name: Stop Agora
+  hosts: core
+  roles:
+    - common
+    - stop
+  vars:
+    compose: "{{ composes.agora }}"

@@ -1,0 +1,8 @@
+[source]
+192.168.99.101 ansible_host=127.0.0.1 ansible_user=vagrant ansible_password=vagrant ansible_port=2224
+
+[web]
+192.168.99.102 ansible_host=127.0.0.1 ansible_user=vagrant ansible_password=vagrant ansible_port=2222
+
+[core]
+192.168.99.100 ansible_host=127.0.0.1 ansible_user=vagrant ansible_password=vagrant ansible_port=2223
