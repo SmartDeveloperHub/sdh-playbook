@@ -1,26 +1,33 @@
 ---
 
- - name: Up Agora
-   hosts: core
-   roles:
-     - angstwad.docker_ubuntu
-     - common
-     - agora
-   vars:     
-     update: true
-     compose: "{{ composes.agora }}"   
-   become: yes
+- name: Provision with Docker
+  hosts: 
+    - core
+    - source
+    - web
+  roles:
+    - angstwad.docker_ubuntu
+  become: yes
 
- - name: Up metric services
-   hosts: core
-   roles:
-     - angstwad.docker_ubuntu
-     - common
-     - metrics
-   vars:
-     compose: "{{ composes.metrics }}"
-     update: true
-   become: yes
+- name: Up Agora
+  hosts: core
+  roles:     
+    - common
+    - agora
+  vars:     
+    update: true
+    compose: "{{ composes.agora }}"   
+  become: yes
+
+- name: Up metric services
+  hosts: core
+  roles:     
+    - common
+    - metrics
+  vars:
+    compose: "{{ composes.metrics }}"
+    update: true
+  become: yes
 
 #- name: Up API
 #  hosts: web
