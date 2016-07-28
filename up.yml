@@ -11,12 +11,22 @@
 
 - name: Up Agora
   hosts: core
-  roles:     
+  roles:
     - common
     - agora
+  vars:
+    update: true
+    compose: "{{ composes.agora }}"
+  become: yes
+
+- name: Up Harvesters
+  hosts: source
+  roles:     
+    - common
+    - harvesters
   vars:     
     update: true
-    compose: "{{ composes.agora }}"   
+    compose: "{{ composes.harvesters }}"   
   become: yes
 
 - name: Up metric services
@@ -29,11 +39,12 @@
     update: true
   become: yes
 
-#- name: Up API
-#  hosts: web
-#  roles:
-#    - common
-#    - web
-#  vars:
-#    compose: "{{ composes.web }}"
-#    update: true
+- name: Up web & api
+  hosts: web
+  roles:
+    - common
+    - web
+  vars:
+    compose: "{{ composes.web }}"
+    update: true
+  become: yes

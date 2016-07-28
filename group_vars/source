@@ -1,0 +1,19 @@
+---
+core_ip_address: "{{hostvars[groups['core'][0]]['inventory_hostname']}}"
+source_ip_address: "{{hostvars[groups['source'][0]]['inventory_hostname']}}"
+public_port: 8081
+
+composes:
+  harvesters:
+    name: harvesters
+    path: sdh-machine-harvesters
+    version: v3
+    repo: https://github.com/smartdeveloperhub/sdh-machine-harvesters.git
+    env:
+      COLL_GITLAB_IP: GITLAB_HOST
+      COLL_GITLAB_USER: GITLAB_USERNAME
+      COLL_GITLAB_PASS: GITLAB_PASSWORD
+      BROKER_HOST: "{{core_ip_address}}"
+      BROKER_PORT: 5672
+      TARGET: JENKINS_URL
+

@@ -1,0 +1,12 @@
+---
+#
+seeds:
+  orgharvester:
+    type: "org:ORGHarvester"
+    uri: "http://{{groups['source'][0]}}:{{public_port}}/orgharvester/"
+  ciharvester:
+    type: "ci:CIHarvester"
+    uri: "http://{{groups['source'][0]}}:{{public_port}}/ciharvester/"
+  scmharvester:
+    type: "scm:SCMHarvester"
+    uri: "http://{{groups['source'][0]}}:{{public_port}}/scmharvester/"

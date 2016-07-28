@@ -1,0 +1,53 @@
+---
+
+- name: update environment variables  
+  replace: 'dest="{{compose.path}}/docker-compose.yml" regexp="{{item.key}}=$" replace="{{item.key}}={{item.value}}"'
+  with_dict: "{{ compose.env | default({}) }}"
+
+- name: update public port
+  replace: 'dest="{{compose.path}}/docker-compose.yml" regexp="80:80" replace="{{public_port}}:80"'
+
+- name: build images
+  when: create or new_compose.changed
+  command: docker-compose build --pull
+  register: compose_build
+  args:
+    chdir: "{{ compose.path }}"
+
+- name: crawl all gitlab repositories
+  when: compose_build.changed
+  command: docker-compose up -d glcollector
+  register: compose_crawl
+  args:
+    chdir: "{{ compose.path }}"
+
+- name: Wait for crawling completion
+  register: ready
+  until: ready.status == 200
+  uri:
+    url: http://{{source_ip_address}}:5000
+    method: GET
+    HEADER_Accept: "application/json"
+    status_code: 200
+  retries: 100
+  delay: 10
+
+- name: up containers
+  command: docker-compose up -d
+  register: compose_up
+  args:
+    chdir: "{{ compose.path }}"
+  changed_when: compose_up.stdout_lines
+
+- name: register seeds
+  uri:
+    url: http://{{core_ip_address}}:9009/seeds
+    method: POST
+    body:
+      type: "{{item.value.type}}"
+      uri: "{{item.value.uri}}"
+    status_code: 201, 409
+    body_format: json
+  with_dict:
+    "{{ seeds }}"
+

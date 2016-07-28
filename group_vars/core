@@ -1,5 +1,5 @@
 ---
-core_ip_address: "{{hostvars[groups['core'][0]]['ansible_eth0']['ipv4']['address']}}"
+core_ip_address: "{{hostvars[groups['core'][0]]['inventory_hostname']}}"
 
 composes:
   agora:
